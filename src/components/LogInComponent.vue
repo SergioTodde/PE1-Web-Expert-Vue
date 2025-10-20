@@ -1,11 +1,11 @@
 <script>
 export default {
-  name: "PrivacyPolicyView"
+  name: "LogInComponent"
 }
 </script>
 
 <template>
-<h1>Hier privacy policy</h1>
+<h1>Hier komt inloggen</h1>
 </template>
 
 <style scoped>
