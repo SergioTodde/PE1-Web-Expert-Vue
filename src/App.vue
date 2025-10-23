@@ -1,36 +1,44 @@
-<script>
-import NavComponent from "./components/NavComponent.vue";
-import FooterComponent from "./components/FooterComponent.vue";
-export default {
-  name: "App",
-  data(){
-    return {
+<template>
+  <div id="app">
+    <AppHeader />
+    <main class="main-content">
+      <router-view />
+    </main>
+    <AppFooter />
+  </div>
+</template>
 
+<script>
+import Navbar from './components/layout/Navbar.vue'
+import AppFooter from './components/layout/Footer.vue'
+
+export default {
+  name: 'App',
+  components: {
+    AppHeader: Navbar,
+    AppFooter
+  },
+  data() {
+    return {
+      isLoading: false
     }
   },
-  components: {
-    NavComponent,
-    FooterComponent
+  mounted() {
+    // Initialize app
+    this.initializeApp()
+  },
+  methods: {
+    initializeApp() {
+      // Check if user is logged in
+      const token = localStorage.getItem('auth_token')
+      if (token) {
+        this.$store.dispatch('auth/checkAuth')
+      }
+    }
   }
 }
 </script>
 
-<template>
-  <nav-component/>
-  <router-view/>
-  <footer-component/>
-</template>
-
 <style>
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Montserrat', sans-serif;
-}
-body{
-  background: #ffffff;
-  color: #000000;
-}
-
+/* Global styles will be in main.css */
 </style>

@@ -1,50 +1,149 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from "../views/HomeView.vue";
-import AboutView from "../views/AboutView.vue";
-import PrivacyPolicyView from "../views/PrivacyPolicyView.vue";
-import NotFoundView from "../views/NotFoundView.vue";
-import SignInComponent from "../components/SignInComponent.vue";
-import LogInComponent from "../components/LogInComponent.vue";
-import PasswordForgottenComponent from "../components/PasswordForgottenComponent.vue";
+import store from '../store'
+
+const routes = [
+    {
+        path: '/',
+        name: 'Home',
+        component: () => import('../views/Home.vue')
+    },
+    {
+        path: '/events',
+        name: 'Events',
+        component: () => import('../views/Events.vue')
+    },
+    {
+        path: '/events/:id',
+        name: 'EventDetail',
+        component: () => import('../views/EventDetailView.vue'),
+        props: true
+    },
+    {
+        path: '/create-event',
+        name: 'CreateEvent',
+        component: () => import('../views/CreateEvent.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('../views/Profile.vue'),
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: () => import('../views/Admin.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('../views/Login.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('../views/Register.vue')
+    },
+    {
+        path: '/password-reset',
+        name: 'PasswordReset',
+        component: () => import('../views/PasswordReset.vue')
+    },
+    {
+        path: '/help',
+        name: 'Help',
+        component: () => import('../views/viewsFooter/Help.vue')
+    },
+    {
+        path: '/contact',
+        name: 'Contact',
+        component: () => import('../views/viewsFooter/Contact.vue')
+    },
+    {
+        path: '/faq',
+        name: 'FAQ',
+        component: () => import('../views/viewsFooter/FAQ.vue')
+    },
+    {
+        path: '/privacy',
+        name: 'Privacy',
+        component: () => import('../views/viewsFooter/Privacy.vue')
+    },
+    {
+        path: '/terms',
+        name: 'Terms',
+        component: () => import('../views/viewsFooter/Terms.vue')
+    },
+    {
+        path: '/cookies',
+        name: 'Cookies',
+        component: () => import('../views/viewsFooter/Cookies.vue')
+    },
+    {
+        path: '/pricing',
+        name: 'Pricing',
+        component: () => import('../views/viewsFooter/Pricing.vue')
+    },
+    {
+        path: '/success-stories',
+        name: 'SuccessStories',
+        component: () => import('../views/viewsFooter/SuccessStories.vue')
+    },
+    {
+        path: '/resources',
+        name: 'Resources',
+        component: () => import('../views/viewsFooter/Resources.vue')
+    },
+    {
+        path: '/api',
+        name: 'API',
+        component: () => import('../views/viewsFooter/API.vue')
+    },
+    {
+        path: '/partners',
+        name: 'Partners',
+        component: () => import('../views/viewsFooter/Partners.vue')
+    },
+    {
+        path: '/sitemap',
+        name: 'Sitemap',
+        component: () => import('../views/viewsFooter/Sitemap.vue')
+    },
+    {
+        path: '/accessibility',
+        name: 'Accessibility',
+        component: () => import('../views/viewsFooter/Accessibility.vue')
+    },
+    {
+        path: '/security',
+        name: 'Security',
+        component: () => import('../views/viewsFooter/Security.vue')
+    },
+    {
+        path: '/notifications',
+        name: 'Notifications',
+        component: () => import('../views/notifications.vue')
+    },
+]
+
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes:[
-        {
-            name: 'Home',
-            path: '/',
-            component: HomeView,
-        },
-        {
-            name: 'About',
-            path: '/over',
-            component: AboutView,
-        },
-        {
-            name: 'Sign-in',
-            path: '/aanmelden',
-            component: SignInComponent,
-        },
-        {
-            name: 'Login',
-            path: '/login',
-            component: LogInComponent,
-        },
-        {
-            name: 'Password forgotten',
-            path: '/wachtwoord-vergeten',
-            component: PasswordForgottenComponent,
-        },
-        {
-            name: 'PrivacyPolicy',
-            path: '/privacy-richtlijnen',
-            component: PrivacyPolicyView,
-        },
-        {
-            path: '/:notFound(.*)',
-            name: 'NotFound',
-            component: NotFoundView,
-        }
-    ],
-});
+    history: createWebHistory(),
+    routes
+})
+
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = store.getters['auth/isAuthenticated']
+    const isAdmin = store.getters['auth/isAdmin']
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        next('/login')
+    } else if (to.meta.requiresAdmin && !isAdmin) {
+        next('/')
+    } else {
+        next()
+    }
+})
 
 export default router
