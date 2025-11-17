@@ -541,6 +541,7 @@ export default {
 /* Input and Select Styles */
 .filter-select,
 .filter-input {
+  box-sizing: border-box;
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e2e8f0;
