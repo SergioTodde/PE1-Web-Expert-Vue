@@ -126,6 +126,11 @@ const routes = [
         name: 'Notifications',
         component: () => import('../views/notifications.vue')
     },
+    {
+        path: '/:pathMatch(.*)*',
+        name: 'NotFound',
+        component: () => import('../views/NotFound.vue')
+    }
 ]
 
 const router = createRouter({

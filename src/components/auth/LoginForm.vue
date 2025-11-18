@@ -177,6 +177,7 @@ export default {
 }
 
 .form-control {
+  box-sizing: border-box;
   width: 100%;
   padding: 0.75rem 1rem;
   border: 2px solid #e5e7eb;

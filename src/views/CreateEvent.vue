@@ -947,6 +947,7 @@ export default {
 }
 
 .progress-steps {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -1087,6 +1088,7 @@ export default {
 
 .form-control {
   width: 100%;
+  box-sizing: border-box;
   padding: 1rem 1.25rem;
   border: 2px solid #e2e8f0;
   border-radius: 10px;
