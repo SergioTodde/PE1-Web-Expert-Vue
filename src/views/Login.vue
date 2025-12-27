@@ -70,6 +70,7 @@ export default {
 .login-view {
   min-height: 100vh;
   display: flex;
+  justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem 0;
@@ -85,8 +86,8 @@ export default {
 }
 
 .login-card {
-  background: white;
   padding: 3rem;
+  background: white;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }

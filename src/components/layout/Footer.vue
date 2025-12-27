@@ -135,6 +135,7 @@ export default {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
   gap: 2rem;
+  padding: 0 2rem;
   margin-bottom: 2rem;
 }
 
@@ -243,6 +244,7 @@ export default {
 
 .footer-bottom-content {
   display: flex;
+  padding: 0 2rem;
   justify-content: space-between;
   align-items: center;
 }

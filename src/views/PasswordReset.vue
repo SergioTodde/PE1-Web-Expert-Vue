@@ -8,8 +8,6 @@
               <i class="fas fa-arrow-left"></i>
               Terug naar inloggen
             </router-link>
-            <h1>Wachtwoord Resetten</h1>
-            <p>Vul je e-mailadres in om een resetlink te ontvangen.</p>
           </div>
 
           <PasswordResetForm @success="handleResetSuccess" />
@@ -77,6 +75,7 @@ export default {
   min-height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 2rem 0;
 }

@@ -300,7 +300,6 @@ export default {
 
 <style scoped>
 .password-reset-form {
-  max-width: 400px;
   margin: 0 auto;
   padding: 40px 20px;
 }

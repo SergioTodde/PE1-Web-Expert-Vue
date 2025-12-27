@@ -518,12 +518,23 @@ export default {
 .btn-primary {
   background: #3498db;
   color: white;
+  display: flex;
+  align-items: center;
   border-color: #3498db;
+  i.fa-envelope {
+    color: #FFFFFF;
+  }
 }
 
+
+
 .btn-primary:hover {
-  background: #2980b9;
+  background: #ffffff;
+  color: #2980b9;
   border-color: #2980b9;
+  i.fa-envelope{
+    color: #2980b9;
+  }
 }
 
 .btn-outline {
@@ -535,6 +546,9 @@ export default {
 .btn-outline:hover {
   background: #3498db;
   color: white;
+  i.fa-paper-plane{
+    color: #FFFFFF;
+  }
 }
 
 /* Responsive Design */
