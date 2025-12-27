@@ -102,12 +102,37 @@ export default {
       this.loading = true
 
       try {
+        // Dit roept nu de ECHTE Laravel API aan
         await this.login(this.form)
+
+        // Success - redirect
         this.$emit('success')
+
+        // Check for redirect query parameter or go to home
+        const redirect = this.$route.query.redirect || '/'
+        this.$router.push(redirect)
+
       } catch (error) {
         this.handleError(error)
       } finally {
         this.loading = false
+      }
+    },
+
+    handleError(error) {
+      if (error.message === 'Ongeldige inloggegevens') {
+        this.errors.password = 'Ongeldige inloggegevens'
+      } else if (error.message.includes('Validatie fout')) {
+        try {
+          const errors = JSON.parse(error.message.replace('Validatie fout: ', ''))
+          Object.keys(errors).forEach(key => {
+            this.errors[key] = errors[key][0]
+          })
+        } catch {
+          this.errors.general = 'Validatie fout'
+        }
+      } else {
+        this.errors.general = error.message || 'Er is een fout opgetreden. Probeer het opnieuw.'
       }
     },
 
@@ -136,25 +161,6 @@ export default {
     isValidEmail(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       return re.test(email)
-    },
-
-    handleError(error) {
-      if (error.response?.status === 401) {
-        this.errors.password = 'Ongeldige inloggegevens'
-      } else if (error.response?.status === 422) {
-        // Validation errors from backend
-        const backendErrors = error.response.data.errors
-        Object.keys(backendErrors).forEach(key => {
-          this.errors[key] = backendErrors[key][0]
-        })
-      } else {
-        this.errors.general = 'Er is een fout opgetreden. Probeer het opnieuw.'
-      }
-    },
-
-    socialLogin(provider) {
-      // Implement social login
-      this.$toast.info(`${provider} login komt binnenkort beschikbaar`)
     }
   }
 }

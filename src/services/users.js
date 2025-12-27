@@ -1,40 +1,33 @@
 import api from './api'
 
-export const usersService = {
-    // Get all users (admin only)
-    getAll() {
-        return api.get('/users')
+export const authService = {
+    login(credentials) {
+        return api.post('/login', credentials)
     },
 
-    // Get user profile
-    getProfile(userId) {
-        return api.get(`/users/${userId}`)
+    register(userData) {
+        return api.post('/register', userData)
     },
 
-    // Update user profile
-    updateProfile(userId, profileData) {
-        return api.put(`/users/${userId}`, profileData)
+    logout() {
+        return api.post('/logout')
     },
 
-    // Get co-hosts for event
-    getCoHosts(eventId) {
-        return api.get(`/events/${eventId}/co-hosts`)
+    getUser() {
+        return api.get('/user')
     },
 
-    // Add co-host to event
-    addCoHost(eventId, userId) {
-        return api.post(`/events/${eventId}/co-hosts`, { user_id: userId })
+    updateProfile(profileData) {
+        return api.put('/profile', profileData)
     },
 
-    // Remove co-host from event
-    removeCoHost(eventId, userId) {
-        return api.delete(`/events/${eventId}/co-hosts/${userId}`)
+    changePassword(passwordData) {
+        return api.post('/change-password', passwordData)
     },
 
-    // Update user role
-    updateRole(userId, role) {
-        return api.put(`/users/${userId}/role`, { role })
+    resetPassword(email) {
+        return api.post('/password-reset', { email })
     }
 }
 
-export default usersService
+export default authService

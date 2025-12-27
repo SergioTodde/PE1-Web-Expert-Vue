@@ -1,38 +1,10 @@
+import api from '@/services/api'
+
 const state = {
     user: null,
     token: localStorage.getItem('auth_token') || null,
     isAuthenticated: false,
     isAdmin: false
-}
-
-const mockUsers = {
-    'user@test.com': {
-        id: 1,
-        name: 'Test Gebruiker',
-        email: 'user@test.com',
-        phone: '+32 123 45 67 89',
-        avatar: '/images/avatar-placeholder.png',
-        role: 'user',
-        created_at: '2024-01-01T00:00:00Z'
-    },
-    'admin@test.com': {
-        id: 2,
-        name: 'admin Gebruiker',
-        email: 'admin@test.com',
-        phone: '+32 987 65 43 21',
-        avatar: '/images/avatar-placeholder.png',
-        role: 'admin',
-        created_at: '2024-01-01T00:00:00Z'
-    },
-    'john@example.com': {
-        id: 3,
-        name: 'John Doe',
-        email: 'john@example.com',
-        phone: '+32 456 78 90 12',
-        avatar: '/images/avatar-placeholder.png',
-        role: 'user',
-        created_at: '2024-02-15T00:00:00Z'
-    }
 }
 
 const mutations = {
@@ -66,65 +38,40 @@ const mutations = {
 const actions = {
     async login({ commit }, credentials) {
         try {
-            // Simuleer API call delay
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            // Gebruik ECHTE Laravel API
+            const response = await api.post('/login', credentials)
 
-            const { email, password } = credentials
+            const { token, user } = response.data
 
-            // Mock authenticatie - accepteer elk wachtwoord voor test gebruikers
-            if (mockUsers[email]) {
-                const user = mockUsers[email]
-                const token = `mock_jwt_token_${user.id}_${Date.now()}`
+            commit('SET_TOKEN', token)
+            commit('SET_USER', user)
 
-                commit('SET_TOKEN', token)
-                commit('SET_USER', user)
-
-                return { data: { token, user } }
-            } else {
-                // Voor nieuwe gebruikers, maak een mock user aan
-                const newUser = {
-                    id: Object.keys(mockUsers).length + 1,
-                    name: email.split('@')[0],
-                    email: email,
-                    phone: '',
-                    avatar: '/images/avatar-placeholder.png',
-                    role: 'user',
-                    created_at: new Date().toISOString()
-                }
-
-                const token = `mock_jwt_token_${newUser.id}_${Date.now()}`
-
-                commit('SET_TOKEN', token)
-                commit('SET_USER', newUser)
-
-                return { data: { token, user: newUser } }
-            }
+            return response
         } catch (error) {
+            if (error.response?.status === 401) {
+                throw new Error('Ongeldige inloggegevens')
+            } else if (error.response?.status === 422) {
+                throw new Error('Validatie fout: ' + JSON.stringify(error.response.data.errors))
+            }
             throw new Error('Inloggen mislukt. Probeer het opnieuw.')
         }
     },
 
     async register({ commit }, userData) {
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            // Gebruik ECHTE Laravel API
+            const response = await api.post('/register', userData)
 
-            const newUser = {
-                id: Object.keys(mockUsers).length + 1,
-                name: `${userData.first_name} ${userData.last_name}`,
-                email: userData.email,
-                phone: userData.phone || '',
-                avatar: '/images/avatar-placeholder.png',
-                role: 'user',
-                created_at: new Date().toISOString()
-            }
-
-            const token = `mock_jwt_token_${newUser.id}_${Date.now()}`
+            const { token, user } = response.data
 
             commit('SET_TOKEN', token)
-            commit('SET_USER', newUser)
+            commit('SET_USER', user)
 
-            return { data: { token, user: newUser } }
+            return response
         } catch (error) {
+            if (error.response?.status === 422) {
+                throw new Error('Validatie fout: ' + JSON.stringify(error.response.data.errors))
+            }
             throw new Error('Registreren mislukt. Probeer het opnieuw.')
         }
     },
@@ -133,42 +80,44 @@ const actions = {
         if (!state.token) return
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 500))
-
-            // Simuleer token verificatie
-            const tokenParts = state.token.split('_')
-            const userId = parseInt(tokenParts[3])
-
-            // Vind user in mock data
-            const user = Object.values(mockUsers).find(u => u.id === userId)
-            if (user) {
-                commit('SET_USER', user)
-            } else {
-                commit('LOGOUT')
-            }
+            // Gebruik ECHTE API om user te verifiëren
+            const response = await api.get('/user')
+            commit('SET_USER', response.data)
         } catch (error) {
+            // Token is ongeldig, logout
             commit('LOGOUT')
         }
     },
 
-    logout({ commit }) {
+    logout({ commit, state }) {
+        // Roep backend logout aan
+        if (state.token) {
+            api.post('/logout').catch(() => {
+                // Negeer errors bij logout
+            })
+        }
         commit('LOGOUT')
     },
 
-    async updateProfile({ commit, state }, profileData) {
+    async updateProfile({ commit }, profileData) {
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
-            const updatedUser = {
-                ...state.user,
-                ...profileData,
-                name: `${profileData.first_name} ${profileData.last_name}`
-            }
-
-            commit('UPDATE_USER', updatedUser)
-            return { data: updatedUser }
+            const response = await api.put('/profile', profileData)
+            commit('UPDATE_USER', response.data)
+            return response
         } catch (error) {
-            throw new Error('Profiel bijwerken mislukt.')
+            throw new Error('Profiel bijwerken mislukt: ' + error.message)
+        }
+    },
+
+    async changePassword({ commit }, passwordData) {
+        try {
+            const response = await api.post('/change-password', passwordData)
+            return response
+        } catch (error) {
+            if (error.response?.status === 422) {
+                throw new Error('Huidig wachtwoord is incorrect')
+            }
+            throw new Error('Wachtwoord wijzigen mislukt')
         }
     }
 }
